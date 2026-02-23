@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model City {
+  id         String   @id
+  name       String
+  timezone   String   @default("Europe/Bratislava")
+  createdAt  DateTime @default(now())
+  drivers    Driver[]
+}
+
+model Connector {
+  id               String   @id
+  name             String
+  provider         String
+  pollingRevenueSec Int
+  pollingLiveSec   Int
+  enabled          Boolean @default(true)
+  createdAt        DateTime @default(now())
+}
+
+model Driver {
+  id        String   @id
+  cityId    String
+  name      String
+  vehicle   String?
+  city      City     @relation(fields: [cityId], references: [id])
+}
+
+model SyncRun {
+  id        String   @id @default(cuid())
+  startedAt DateTime
+  finishedAt DateTime?
+  status    String
+  details   String?
+}
