@@ -40,3 +40,79 @@ model SyncRun {
   status    String
   details   String?
 }
+
+model FinanceSyncRun {
+  id            String   @id @default(cuid())
+  startedAt     DateTime @default(now())
+  finishedAt    DateTime?
+  status        String
+  provider      String   @default("bolt")
+  companyId     String?
+  startTs       Int
+  endTs         Int
+  importedCount Int      @default(0)
+  updatedCount  Int      @default(0)
+  errorMessage  String?
+
+  @@index([startedAt])
+  @@index([status])
+}
+
+model BoltFinanceOrder {
+  id                        String   @id @default(cuid())
+  orderReference            String   @unique
+  companyId                 String?
+  companyName               String?
+  driverUuid                String
+  driverName                String
+  driverPhone               String?
+  partnerUuid               String?
+  vehicleLicensePlate       String?
+  vehicleModel              String?
+  paymentMethod             String?
+  paymentConfirmedTimestamp Int?
+  orderCreatedTimestamp     Int
+  orderFinishedTimestamp    Int?
+  orderStatus               String?
+  pickupAddress             String?
+  destinationAddress        String?
+  rideDistance              Float?
+  ridePrice                 Float    @default(0)
+  bookingFee                Float    @default(0)
+  tollFee                   Float    @default(0)
+  cancellationFee           Float    @default(0)
+  tip                       Float    @default(0)
+  netEarnings               Float    @default(0)
+  cashDiscount              Float    @default(0)
+  inAppDiscount             Float    @default(0)
+  commission                Float    @default(0)
+  rawJson                   Json
+  importedAt                DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  adjustments FinanceAdjustment[]
+
+  @@index([driverUuid])
+  @@index([driverName])
+  @@index([vehicleLicensePlate])
+  @@index([orderCreatedTimestamp])
+  @@index([orderFinishedTimestamp])
+  @@index([paymentMethod])
+}
+
+model FinanceAdjustment {
+  id             String   @id @default(cuid())
+  orderReference String?
+  driverUuid     String
+  driverName     String
+  type           String
+  amount         Float
+  note           String
+  createdBy      String   @default("system")
+  createdAt      DateTime @default(now())
+  order          BoltFinanceOrder? @relation(fields: [orderReference], references: [orderReference])
+
+  @@index([driverUuid])
+  @@index([type])
+  @@index([createdAt])
+}
