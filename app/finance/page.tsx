@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import type { FinanceBridgeOverview } from "@/lib/finance/types";
 import { currency, dateTime } from "@/lib/utils/format";
 
@@ -139,10 +140,10 @@ function Card({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Th({ children }: { children: React.ReactNode }) {
+function Th({ children }: { children: ReactNode }) {
   return <th className="whitespace-nowrap px-4 py-3 font-semibold">{children}</th>;
 }
 
-function Td({ children }: { children: React.ReactNode }) {
+function Td({ children }: { children: ReactNode }) {
   return <td className="whitespace-nowrap px-4 py-3">{children}</td>;
 }
